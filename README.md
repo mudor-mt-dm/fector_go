@@ -11,4 +11,4 @@
 - [fector_go](https://github.com/mudor-mt-dm/fector_go)/task_n/internal/ - каталог кода сервисов, решающих задачу
 - [fector_go](https://github.com/mudor-mt-dm/fector_go)/task_n/test/ - каталог тестов проверяющих тесты решающие задачу
 - [fector_go](https://github.com/mudor-mt-dm/fector_go)/task_n/data/ -  каталог данных для задачи
-- [fector_go](https://github.com/mudor-mt-dm/fector_go)/task_n/devops/ - каталог инфраструктурных операций обеспечивающих решение задачи _(например подъем базы данных и её конфигурирование)_
+- [fector_go](https://github.com/mudor-mt-dm/fector_go)/task_n/build/ - каталог инфраструктурных операций обеспечивающих решение задачи _(например подъем базы данных и её конфигурирование)_
