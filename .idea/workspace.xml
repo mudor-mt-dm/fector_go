@@ -4,11 +4,7 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c794817d-c0d5-4b54-86e2-4b2b66143c15" name="Changes" comment="Рефакторинг каталогов">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/task_1/readme.md" beforeDir="false" />
-    </list>
+    <list default="true" id="c794817d-c0d5-4b54-86e2-4b2b66143c15" name="Changes" comment="Рефакторинг каталогов из готового проекта" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -60,19 +56,20 @@
       <window_info id="Commit_Guest" show_stripe_button="false" />
       <window_info id="Learn" show_stripe_button="false" />
       <window_info id="DFA" show_stripe_button="false" />
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.14672852" />
-      <window_info id="Commit" order="1" weight="0.14672852" />
+      <window_info content_ui="combo" id="Project" order="0" weight="0.14672852" />
+      <window_info active="true" id="Commit" order="1" visible="true" weight="0.14672852" />
       <window_info id="Structure" order="2" side_tool="true" weight="0.14672852" />
       <window_info id="Pull Requests" order="3" weight="0.14672852" />
       <window_info anchor="bottom" id="Database Changes" show_stripe_button="false" />
       <window_info anchor="bottom" id="TypeScript" show_stripe_button="false" />
       <window_info anchor="bottom" id="TODO" show_stripe_button="false" />
       <window_info anchor="bottom" id="File Transfer" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Version Control" order="0" weight="0.33228415" />
+      <window_info anchor="bottom" id="Version Control" order="0" weight="0.32958633" />
       <window_info anchor="bottom" id="Problems" order="1" />
-      <window_info anchor="bottom" id="Problems View" order="2" weight="0.33228415" />
-      <window_info active="true" anchor="bottom" id="Terminal" order="3" visible="true" weight="0.33228415" />
+      <window_info active="true" anchor="bottom" id="Problems View" order="2" visible="true" weight="0.32958633" />
+      <window_info anchor="bottom" id="Terminal" order="3" weight="0.32958633" />
       <window_info anchor="bottom" id="Services" order="4" weight="0.33228415" />
+      <window_info anchor="bottom" id="Find" order="4" weight="0.32958633" />
       <window_info anchor="right" id="Endpoints" show_stripe_button="false" />
       <window_info anchor="right" id="make" show_stripe_button="false" side_tool="true" />
       <window_info anchor="right" id="Coverage" show_stripe_button="false" side_tool="true" />
@@ -82,6 +79,11 @@
       <window_info anchor="right" id="Gradle" order="3" weight="0.25" />
       <window_info anchor="right" id="Maven" order="4" weight="0.25" />
     </layout>
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$" />
+    </key>
   </component>
   <component name="SharedIndexes">
     <attachedChunks>
@@ -113,7 +115,8 @@
     <MESSAGE value="idea gitignore" />
     <MESSAGE value="Описание первой задачи и её решения" />
     <MESSAGE value="Рефакторинг каталогов" />
-    <option name="LAST_COMMIT_MESSAGE" value="Рефакторинг каталогов" />
+    <MESSAGE value="Рефакторинг каталогов из готового проекта" />
+    <option name="LAST_COMMIT_MESSAGE" value="Рефакторинг каталогов из готового проекта" />
   </component>
   <component name="VgoProject">
     <settings-migrated>true</settings-migrated>
