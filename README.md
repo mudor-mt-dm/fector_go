@@ -1,14 +1,11 @@
 # fector_go
 
+## Цель
+Изучить го под менторством друга
 
-### Каталоги проекта:
+## Путь
+Будут даваться задачи, задачи будут кластся в беклог, отрабатываться, по ним будут пушится коммиты.
 
-- [fector_go](https://github.com/mudor-mt-dm/fector_go) - основной каталог проекта
-- [fector_go](https://github.com/mudor-mt-dm/fector_go)/task_n - каталог задачи
-- [fector_go](https://github.com/mudor-mt-dm/fector_go)/task_n/readme.md - описание задачи
-- [fector_go](https://github.com/mudor-mt-dm/fector_go)/task_n/doc/ - каталог документов по задаче
-- [fector_go](https://github.com/mudor-mt-dm/fector_go)/task_n/pkg/ - каталог кода переиспользуемых пакетов, рразработанных в рамках задачи
-- [fector_go](https://github.com/mudor-mt-dm/fector_go)/task_n/internal/ - каталог кода сервисов, решающих задачу
-- [fector_go](https://github.com/mudor-mt-dm/fector_go)/task_n/test/ - каталог тестов проверяющих тесты решающие задачу
-- [fector_go](https://github.com/mudor-mt-dm/fector_go)/task_n/data/ -  каталог данных для задачи
-- [fector_go](https://github.com/mudor-mt-dm/fector_go)/task_n/build/ - каталог инфраструктурных операций обеспечивающих решение задачи _(например подъем базы данных и её конфигурирование)_
+## Дисциплина
+
+Сложная часть с дисциплиной, минимум 2 раза в неделю сажусь на 10 минут, чтобы написать минимум 2 строчки кода (на go) и закоммитить их. Яндекс напомнит.
