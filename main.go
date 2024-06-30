@@ -94,8 +94,8 @@ func getBooks(w http.ResponseWriter, r *http.Request) {
 		var book Book
 		var shortDescription sql.NullString
 		var fullDescription sql.NullString
-		var authorIDs []sql.NullInt64
-		var authorNames []sql.NullString
+		var authorIDs []byte
+		var authorNames []byte
 		err := rows.Scan(&book.ID, &book.Title, &shortDescription, &fullDescription, &authorIDs, &authorNames)
 		if err != nil {
 			log.Println(err)
@@ -110,15 +110,19 @@ func getBooks(w http.ResponseWriter, r *http.Request) {
 		if fullDescription.Valid {
 			book.FullDescription = &fullDescription.String
 		}
-		for _, id := range authorIDs {
-			if id.Valid {
-				book.AuthorIDs = append(book.AuthorIDs, int(id.Int64))
-			}
+		if err := json.Unmarshal(authorIDs, &book.AuthorIDs); err != nil {
+			log.Println(err)
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(http.StatusInternalServerError)
+			json.NewEncoder(w).Encode(ErrorResponse{Message: "Internal Server Error", Error: err.Error()})
+			return
 		}
-		for _, name := range authorNames {
-			if name.Valid {
-				book.AuthorNames = append(book.AuthorNames, name.String)
-			}
+		if err := json.Unmarshal(authorNames, &book.AuthorNames); err != nil {
+			log.Println(err)
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(http.StatusInternalServerError)
+			json.NewEncoder(w).Encode(ErrorResponse{Message: "Internal Server Error", Error: err.Error()})
+			return
 		}
 		books = append(books, book)
 	}
@@ -141,8 +145,8 @@ func getBookByID(w http.ResponseWriter, r *http.Request) {
 	var book Book
 	var shortDescription sql.NullString
 	var fullDescription sql.NullString
-	var authorIDs []sql.NullInt64
-	var authorNames []sql.NullString
+	var authorIDs []byte
+	var authorNames []byte
 	sqlQuery := `
 		SELECT books.id, books.title, books.short_description, books.full_description, array_agg(authors.id), array_agg(authors.name)
 		FROM books
@@ -169,15 +173,19 @@ func getBookByID(w http.ResponseWriter, r *http.Request) {
 	if fullDescription.Valid {
 		book.FullDescription = &fullDescription.String
 	}
-	for _, id := range authorIDs {
-		if id.Valid {
-			book.AuthorIDs = append(book.AuthorIDs, int(id.Int64))
-		}
+	if err := json.Unmarshal(authorIDs, &book.AuthorIDs); err != nil {
+		log.Println(err)
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(ErrorResponse{Message: "Internal Server Error", Error: err.Error()})
+		return
 	}
-	for _, name := range authorNames {
-		if name.Valid {
-			book.AuthorNames = append(book.AuthorNames, name.String)
-		}
+	if err := json.Unmarshal(authorNames, &book.AuthorNames); err != nil {
+		log.Println(err)
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(ErrorResponse{Message: "Internal Server Error", Error: err.Error()})
+		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")
