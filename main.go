@@ -13,12 +13,12 @@ import (
 )
 
 type Book struct {
-	ID               int    `json:"id"`
-	Title            string `json:"title"`
-	AuthorID         int    `json:"author_id"`
-	AuthorName       string `json:"author_name"`
-	ShortDescription string `json:"short_description"`
-	FullDescription  string `json:"full_description,omitempty"`
+	ID               int     `json:"id"`
+	Title            string  `json:"title"`
+	AuthorID         int     `json:"author_id"`
+	AuthorName       string  `json:"author_name"`
+	ShortDescription *string `json:"short_description"`
+	FullDescription  *string `json:"full_description,omitempty"`
 }
 
 type ErrorResponse struct {
@@ -80,13 +80,17 @@ func getBooks(w http.ResponseWriter, r *http.Request) {
 	var books []Book
 	for rows.Next() {
 		var book Book
-		err := rows.Scan(&book.ID, &book.Title, &book.AuthorID, &book.AuthorName, &book.ShortDescription)
+		var shortDescription sql.NullString
+		err := rows.Scan(&book.ID, &book.Title, &book.AuthorID, &book.AuthorName, &shortDescription)
 		if err != nil {
 			log.Println(err)
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusInternalServerError)
 			json.NewEncoder(w).Encode(ErrorResponse{Message: "Internal Server Error", Error: err.Error()})
 			return
+		}
+		if shortDescription.Valid {
+			book.ShortDescription = &shortDescription.String
 		}
 		books = append(books, book)
 	}
@@ -107,12 +111,14 @@ func getBookByID(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var book Book
+	var shortDescription sql.NullString
+	var fullDescription sql.NullString
 	sqlQuery := `
 		SELECT books.id, books.title, books.author_id, authors.name, books.short_description, books.full_description
 		FROM books
 		JOIN authors ON books.author_id = authors.id
 		WHERE books.id = $1`
-	err = db.QueryRow(sqlQuery, id).Scan(&book.ID, &book.Title, &book.AuthorID, &book.AuthorName, &book.ShortDescription, &book.FullDescription)
+	err = db.QueryRow(sqlQuery, id).Scan(&book.ID, &book.Title, &book.AuthorID, &book.AuthorName, &shortDescription, &fullDescription)
 	if err != nil {
 		w.Header().Set("Content-Type", "application/json")
 		if err == sql.ErrNoRows {
@@ -124,6 +130,12 @@ func getBookByID(w http.ResponseWriter, r *http.Request) {
 			json.NewEncoder(w).Encode(ErrorResponse{Message: "Internal Server Error", Error: err.Error()})
 		}
 		return
+	}
+	if shortDescription.Valid {
+		book.ShortDescription = &shortDescription.String
+	}
+	if fullDescription.Valid {
+		book.FullDescription = &fullDescription.String
 	}
 
 	w.Header().Set("Content-Type", "application/json")
