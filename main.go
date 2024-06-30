@@ -21,11 +21,16 @@ type Book struct {
 	FullDescription  string `json:"full_description,omitempty"`
 }
 
+type ErrorResponse struct {
+	Message string `json:"message"`
+	Error   string `json:"error,omitempty"`
+}
+
 var db *sql.DB
 
 func initDB() {
 	var err error
-	connStr := "user=youruser dbname=yourdb password=yourpassword host=localhost sslmode=disable"
+	connStr := "user=USER dbname=yourdb password=PWD host=localhost sslmode=disable"
 	db, err = sql.Open("postgres", connStr)
 	if err != nil {
 		log.Fatal(err)
@@ -65,7 +70,9 @@ func getBooks(w http.ResponseWriter, r *http.Request) {
 	rows, err := db.Query(sqlQuery, limitInt, offset)
 	if err != nil {
 		log.Println(err)
+		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(ErrorResponse{Message: "Internal Server Error", Error: err.Error()})
 		return
 	}
 	defer rows.Close()
@@ -76,7 +83,9 @@ func getBooks(w http.ResponseWriter, r *http.Request) {
 		err := rows.Scan(&book.ID, &book.Title, &book.AuthorID, &book.AuthorName, &book.ShortDescription)
 		if err != nil {
 			log.Println(err)
+			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusInternalServerError)
+			json.NewEncoder(w).Encode(ErrorResponse{Message: "Internal Server Error", Error: err.Error()})
 			return
 		}
 		books = append(books, book)
@@ -91,7 +100,9 @@ func getBookByID(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(params["id"])
 	if err != nil {
 		log.Println(err)
+		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(ErrorResponse{Message: "Bad Request", Error: err.Error()})
 		return
 	}
 
@@ -103,11 +114,14 @@ func getBookByID(w http.ResponseWriter, r *http.Request) {
 		WHERE books.id = $1`
 	err = db.QueryRow(sqlQuery, id).Scan(&book.ID, &book.Title, &book.AuthorID, &book.AuthorName, &book.ShortDescription, &book.FullDescription)
 	if err != nil {
+		w.Header().Set("Content-Type", "application/json")
 		if err == sql.ErrNoRows {
 			w.WriteHeader(http.StatusNotFound)
+			json.NewEncoder(w).Encode(ErrorResponse{Message: "Not Found"})
 		} else {
 			log.Println(err)
 			w.WriteHeader(http.StatusInternalServerError)
+			json.NewEncoder(w).Encode(ErrorResponse{Message: "Internal Server Error", Error: err.Error()})
 		}
 		return
 	}
