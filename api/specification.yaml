@@ -1,0 +1,124 @@
+openapi: 3.0.0
+info:
+  title: Book Catalog API
+  version: 1.0.0
+  description: API for managing a book catalog with multiple authors per book.
+servers:
+  - url: 'http://localhost:8080'
+    description: Local development server
+paths:
+  /books:
+    get:
+      summary: Get a list of books
+      description: Returns a list of books with optional pagination, sorting, and filtering by author IDs.
+      parameters:
+        - name: page
+          in: query
+          description: Page number for pagination
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          description: Number of books per page
+          schema:
+            type: integer
+            default: 10
+        - name: sortBy
+          in: query
+          description: Field to sort by
+          schema:
+            type: string
+            default: id
+        - name: order
+          in: query
+          description: Sort order (asc or desc)
+          schema:
+            type: string
+            default: asc
+        - name: authorIDs
+          in: query
+          description: Comma-separated list of author IDs to filter by
+          schema:
+            type: string
+      responses:
+        '200':
+          description: A list of books
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Book'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /books/{id}:
+    get:
+      summary: Get a book by ID
+      description: Returns a book by its ID.
+      parameters:
+        - name: id
+          in: path
+          description: ID of the book to retrieve
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: A book object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Book'
+        '404':
+          description: Book not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+components:
+  schemas:
+    Book:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: The book ID
+        title:
+          type: string
+          description: The book title
+        author_ids:
+          type: array
+          items:
+            type: integer
+          description: List of author IDs
+        author_names:
+          type: array
+          items:
+            type: string
+          description: List of author names
+        short_description:
+          type: string
+          description: Short description of the book
+        full_description:
+          type: string
+          description: Full description of the book
+    ErrorResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          description: Error message
+        error:
+          type: string
+          description: Detailed error description
