@@ -3,9 +3,9 @@ package main
 import (
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
-	"os"
 	"strconv"
 	"strings"
 
@@ -211,4 +211,7 @@ func parseArray(arrayString string, target interface{}) error {
 			(*v)[i] = strings.Trim(elem, `"`)
 		}
 	default:
-		return
+		return fmt.Errorf("unsupported type: %T", target)
+	}
+	return nil
+}
