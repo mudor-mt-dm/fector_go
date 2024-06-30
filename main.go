@@ -94,8 +94,8 @@ func getBooks(w http.ResponseWriter, r *http.Request) {
 		var book Book
 		var shortDescription sql.NullString
 		var fullDescription sql.NullString
-		var authorIDs []byte
-		var authorNames []byte
+		var authorIDs string
+		var authorNames string
 		err := rows.Scan(&book.ID, &book.Title, &shortDescription, &fullDescription, &authorIDs, &authorNames)
 		if err != nil {
 			log.Println(err)
@@ -110,14 +110,14 @@ func getBooks(w http.ResponseWriter, r *http.Request) {
 		if fullDescription.Valid {
 			book.FullDescription = &fullDescription.String
 		}
-		if err := json.Unmarshal(authorIDs, &book.AuthorIDs); err != nil {
+		if err := parseArray(authorIDs, &book.AuthorIDs); err != nil {
 			log.Println(err)
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusInternalServerError)
 			json.NewEncoder(w).Encode(ErrorResponse{Message: "Internal Server Error", Error: err.Error()})
 			return
 		}
-		if err := json.Unmarshal(authorNames, &book.AuthorNames); err != nil {
+		if err := parseArray(authorNames, &book.AuthorNames); err != nil {
 			log.Println(err)
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusInternalServerError)
@@ -145,8 +145,8 @@ func getBookByID(w http.ResponseWriter, r *http.Request) {
 	var book Book
 	var shortDescription sql.NullString
 	var fullDescription sql.NullString
-	var authorIDs []byte
-	var authorNames []byte
+	var authorIDs string
+	var authorNames string
 	sqlQuery := `
 		SELECT books.id, books.title, books.short_description, books.full_description, array_agg(authors.id), array_agg(authors.name)
 		FROM books
@@ -173,14 +173,14 @@ func getBookByID(w http.ResponseWriter, r *http.Request) {
 	if fullDescription.Valid {
 		book.FullDescription = &fullDescription.String
 	}
-	if err := json.Unmarshal(authorIDs, &book.AuthorIDs); err != nil {
+	if err := parseArray(authorIDs, &book.AuthorIDs); err != nil {
 		log.Println(err)
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(ErrorResponse{Message: "Internal Server Error", Error: err.Error()})
 		return
 	}
-	if err := json.Unmarshal(authorNames, &book.AuthorNames); err != nil {
+	if err := parseArray(authorNames, &book.AuthorNames); err != nil {
 		log.Println(err)
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusInternalServerError)
@@ -192,19 +192,23 @@ func getBookByID(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(book)
 }
 
-func main() {
-	initDB()
-	defer db.Close()
-
-	r := mux.NewRouter()
-	r.HandleFunc("/books", getBooks).Methods("GET")
-	r.HandleFunc("/books/{id}", getBookByID).Methods("GET")
-
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "8080"
-	}
-
-	log.Printf("Server started on port %s", port)
-	log.Fatal(http.ListenAndServe(":"+port, r))
-}
+func parseArray(arrayString string, target interface{}) error {
+	arrayString = strings.Trim(arrayString, "{}")
+	elements := strings.Split(arrayString, ",")
+	switch v := target.(type) {
+	case *[]int:
+		*v = make([]int, len(elements))
+		for i, elem := range elements {
+			val, err := strconv.Atoi(strings.TrimSpace(elem))
+			if err != nil {
+				return err
+			}
+			(*v)[i] = val
+		}
+	case *[]string:
+		*v = make([]string, len(elements))
+		for i, elem := range elements {
+			(*v)[i] = strings.Trim(elem, `"`)
+		}
+	default:
+		return
