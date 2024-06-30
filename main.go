@@ -215,3 +215,19 @@ func parseArray(arrayString string, target interface{}) error {
 	}
 	return nil
 }
+func main() {
+	initDB()
+	defer db.Close()
+
+	r := mux.NewRouter()
+	r.HandleFunc("/books", getBooks).Methods("GET")
+	r.HandleFunc("/books/{id}", getBookByID).Methods("GET")
+
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
+
+	log.Printf("Server started on port %s", port)
+	log.Fatal(http.ListenAndServe(":"+port, r))
+}
