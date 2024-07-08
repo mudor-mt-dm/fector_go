@@ -1,0 +1,16 @@
+# Use postgres/example user/password credentials
+version: '3.1'
+
+services:
+  postgres:
+    image: postgres:latest
+    shm_size: 500m
+    environment:
+      POSTGRES_DB: "postgres"
+      POSTGRES_USER: "USER"
+      POSTGRES_PASSWORD: "PWD"
+      PGDATA: /opt/pgdata/
+    ports:
+      - "5432:5432"
+    volumes:
+      - D:/projects/data/simple-postgres:/opt/pgdata
