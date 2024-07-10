@@ -70,10 +70,10 @@ func getBooks(w http.ResponseWriter, r *http.Request) {
 	offset := (pageInt - 1) * limitInt
 
 	sqlQuery := `
-			SELECT books.id, books.title, books.short_description, books.full_description, array_agg(authors.id), array_agg(authors.name)
-			FROM books
-			JOIN book_authors ON books.id = book_authors.book_id
-			JOIN authors ON book_authors.author_id = authors.id`
+        SELECT books.id, books.title, books.short_description, books.full_description, array_agg(authors.id), array_agg(authors.name)
+        FROM books
+        JOIN book_authors ON books.id = book_authors.book_id
+        JOIN authors ON book_authors.author_id = authors.id`
 
 	if authorIDs != "" {
 		authorIDList := strings.Split(authorIDs, ",")
@@ -81,9 +81,9 @@ func getBooks(w http.ResponseWriter, r *http.Request) {
 	}
 
 	sqlQuery += `
-		GROUP BY books.id
-		ORDER BY books.` + sortBy + ` ` + order + `
-		LIMIT $1 OFFSET $2`
+        GROUP BY books.id, books.title, books.short_description, books.full_description
+        ORDER BY books.` + sortBy + ` ` + order + `
+        LIMIT $1 OFFSET $2`
 
 	rows, err := db.Query(sqlQuery, limitInt, offset)
 	if err != nil {
@@ -155,11 +155,13 @@ func getBookByID(w http.ResponseWriter, r *http.Request) {
 	var authorIDs string
 	var authorNames string
 	sqlQuery := `
-		SELECT books.id, books.title, books.short_description, books.full_description, array_agg(authors.id), array_agg(authors.name)
-		FROM books
-		JOIN book_authors ON books.id = book_authors.book_id
-		JOIN authors ON book_authors.author_id = authors.id
-		WHERE books.id = $1`
+        SELECT books.id, books.title, books.short_description, books.full_description, array_agg(authors.id), array_agg(authors.name)
+        FROM books
+        JOIN book_authors ON books.id = book_authors.book_id
+        JOIN authors ON book_authors.author_id = authors.id
+        WHERE books.id = $1
+        GROUP BY books.id, books.title, books.short_description, books.full_description`
+
 	err = db.QueryRow(sqlQuery, id).Scan(&book.ID, &book.Title, &shortDescription, &fullDescription, &authorIDs, &authorNames)
 	if err != nil {
 		w.Header().Set("Content-Type", "application/json")
