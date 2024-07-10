@@ -31,6 +31,20 @@ type ErrorResponse struct {
 	Error   string `json:"error,omitempty"`
 }
 
+func corsMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+		w.Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization")
+
+		if r.Method == "OPTIONS" {
+			return
+		}
+
+		next.ServeHTTP(w, r)
+	})
+}
+
 var db *sql.DB
 
 // initDB initializes the database connection.
@@ -233,6 +247,9 @@ func main() {
 	r := mux.NewRouter()
 	r.HandleFunc("/books", getBooks).Methods("GET")
 	r.HandleFunc("/books/{id}", getBookByID).Methods("GET")
+
+	// Применяем middleware для CORS
+	r.Use(corsMiddleware)
 
 	port := os.Getenv("PORT")
 	if port == "" {
