@@ -1,3 +1,4 @@
+// Package main provides a simple RESTful API for managing books and their authors.
 package main
 
 import (
@@ -14,6 +15,7 @@ import (
 	_ "github.com/lib/pq"
 )
 
+// Book represents a book entity with its details and associated authors.
 type Book struct {
 	ID               int      `json:"id"`
 	Title            string   `json:"title"`
@@ -23,6 +25,7 @@ type Book struct {
 	FullDescription  *string  `json:"full_description,omitempty"`
 }
 
+// ErrorResponse represents an error response structure.
 type ErrorResponse struct {
 	Message string `json:"message"`
 	Error   string `json:"error,omitempty"`
@@ -30,6 +33,7 @@ type ErrorResponse struct {
 
 var db *sql.DB
 
+// initDB initializes the database connection.
 func initDB() {
 	var err error
 	connStr := "user=USER dbname=fector_go password=PWD host=localhost sslmode=disable"
@@ -39,6 +43,7 @@ func initDB() {
 	}
 }
 
+// getBooks handles the GET request to fetch books with optional pagination and filtering.
 func getBooks(w http.ResponseWriter, r *http.Request) {
 	queryParams := r.URL.Query()
 	page := queryParams.Get("page")
@@ -132,6 +137,7 @@ func getBooks(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(books)
 }
 
+// getBookByID handles the GET request to fetch a single book by its ID.
 func getBookByID(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	id, err := strconv.Atoi(params["id"])
@@ -193,6 +199,7 @@ func getBookByID(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(book)
 }
 
+// parseArray parses a string representation of an array into a slice of integers or strings.
 func parseArray(arrayString string, target interface{}) error {
 	arrayString = strings.Trim(arrayString, "{}")
 	elements := strings.Split(arrayString, ",")
@@ -216,6 +223,8 @@ func parseArray(arrayString string, target interface{}) error {
 	}
 	return nil
 }
+
+// main initializes the database connection, sets up the HTTP routes, and starts the server.
 func main() {
 	initDB()
 	defer db.Close()
