@@ -4,7 +4,7 @@ info:
   version: 1.0.0
   description: API for managing a book catalog with multiple authors per book.
 servers:
-  - url: 'http://localhost:8080'
+  - url: 'http://localhost:28080'
     description: Local development server
 paths:
   /books:
