@@ -70,10 +70,10 @@ func getBooks(w http.ResponseWriter, r *http.Request) {
 	offset := (pageInt - 1) * limitInt
 
 	sqlQuery := `
-		SELECT books.id, books.title, books.short_description, books.full_description, array_agg(authors.id), array_agg(authors.name)
-		FROM books
-		JOIN book_authors ON books.id = book_authors.book_id
-		JOIN authors ON book_authors.author_id = authors.id`
+			SELECT books.id, books.title, books.short_description, books.full_description, array_agg(authors.id), array_agg(authors.name)
+			FROM books
+			JOIN book_authors ON books.id = book_authors.book_id
+			JOIN authors ON book_authors.author_id = authors.id group by books.id`
 
 	if authorIDs != "" {
 		authorIDList := strings.Split(authorIDs, ",")
