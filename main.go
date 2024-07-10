@@ -73,7 +73,7 @@ func getBooks(w http.ResponseWriter, r *http.Request) {
 			SELECT books.id, books.title, books.short_description, books.full_description, array_agg(authors.id), array_agg(authors.name)
 			FROM books
 			JOIN book_authors ON books.id = book_authors.book_id
-			JOIN authors ON book_authors.author_id = authors.id group by books.id`
+			JOIN authors ON book_authors.author_id = authors.id`
 
 	if authorIDs != "" {
 		authorIDList := strings.Split(authorIDs, ",")
@@ -159,8 +159,7 @@ func getBookByID(w http.ResponseWriter, r *http.Request) {
 		FROM books
 		JOIN book_authors ON books.id = book_authors.book_id
 		JOIN authors ON book_authors.author_id = authors.id
-		WHERE books.id = $1
-		GROUP BY books.id`
+		WHERE books.id = $1`
 	err = db.QueryRow(sqlQuery, id).Scan(&book.ID, &book.Title, &shortDescription, &fullDescription, &authorIDs, &authorNames)
 	if err != nil {
 		w.Header().Set("Content-Type", "application/json")
@@ -235,7 +234,7 @@ func main() {
 
 	port := os.Getenv("PORT")
 	if port == "" {
-		port = "8080"
+		port = "28080"
 	}
 
 	log.Printf("Server started on port %s", port)
